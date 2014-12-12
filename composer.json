@@ -22,7 +22,7 @@
         "php": ">=5.3.2"
     },
     "autoload": {
-        "psr-0": { "Josille": "" }
+        "psr-0": { "Crada": "" }
     },
     "target-dir": "Josille/Apidoc",
     "extra": {
