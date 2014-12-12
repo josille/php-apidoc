@@ -55,6 +55,8 @@ class Builder
      **/
     protected $template_path   = null;
 
+    protected $menu_items = array();
+
     /**
      * Constructor
      *
@@ -87,6 +89,37 @@ class Builder
         return end($st_output);
     }
 
+    protected function setMenuItems($section ='',$item = '')
+    {
+        $this->menu_items[$section][] = $item;
+    }
+
+    protected function createLeftMenu()
+    {
+        $res_menu = '';
+
+        $menu_elements = $this->menu_items;
+        ksort($menu_elements);
+
+
+        $res_menu = '<div class="panel panel-default" id="sidebar">';
+        foreach($menu_elements as $section => $items) {
+
+            $res_menu .= '<div class="panel-heading"><a href="#anchor_section_'.$section.'">'.$section.'</a></div>';
+
+            $res_menu .= '<div class="panel-body">';
+            $res_menu .= '<ul class="nav nav-pills nav-stacked">';
+            foreach ($items as $item) {
+                $res_menu .= '<li role="presentation"><a href="#anchor_'.$item.'">'.$item.'</a></li>';
+            }
+            $res_menu .= '</ul>';
+            $res_menu .= '</div>';
+        }
+        $res_menu .= '</div>';
+
+        return $res_menu;
+    }
+
     protected function saveTemplate($data, $file)
     {
         $oldContent = file_get_contents($this->template_path);
@@ -96,6 +129,7 @@ class Builder
             '{{ title }}' => $this->_title,
             '{{ date }}'    => date('Y-m-d, H:i:s'),
             '{{ version }}' => static::VERSION,
+            '{{ left_menu }}' => $this->createLeftMenu()
         );
         $newContent = strtr($oldContent, $tr);
 
@@ -135,9 +169,12 @@ class Builder
                     continue;
                 }
 
+                $this->setMenuItems($docs['ApiMenu'][0]['section'], $docs['ApiMenu'][0]['function']);
+
                 $sampleOutput = $this->generateSampleOutput($docs, $counter);
 
                 $tr = array(
+                    '{{ anchor_id }}'               => $docs['ApiMenu'][0]['function'],
                     '{{ elt_id }}'                  => $counter,
                     '{{ method }}'                  => $this->generateBadgeForMethod($docs),
                     '{{ route }}'                   => $docs['ApiRoute'][0]['name'],
@@ -157,9 +194,11 @@ class Builder
         $output = '';
 
         foreach ($template as $key => $value) {
-          array_unshift($value, '<h2>' . $key . '</h2>');
+          array_unshift($value, '<h2 class="anchor_offset" id="anchor_section_'.$key.'">' . $key . '</h2>');
+            array_push($value, '</br></br>');
           $output .= implode(PHP_EOL, $value);
         }
+
 
         $this->saveTemplate($output, $this->_output_file);
 
@@ -395,7 +434,7 @@ class Builder
     public static $mainTpl = '
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4 class="panel-title">
+        <h4 class="panel-title anchor_offset" id="anchor_{{ anchor_id }}">
             {{ method }} <a data-toggle="collapse" data-parent="#accordion{{ elt_id }}" href="#collapseOne{{ elt_id }}"> {{ route }}</a>
         </h4>
     </div>
