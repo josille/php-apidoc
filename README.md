@@ -45,6 +45,7 @@ class User
     /**
      * @ApiDescription(section="User", description="Get information about user")
      * @ApiMethod(type="get")
+     * @ApiMenu(section="User", function="user")
      * @ApiRoute(name="/user/get/{id}")
      * @ApiParams(name="id", type="integer", nullable=false, description="User id")
      * @ApiParams(name="data", type="object", sample="{'user_id':'int','user_name':'string','profile':{'email':'string','age':'integer'}}")
@@ -62,6 +63,7 @@ class User
     /**
      * @ApiDescription(section="User", description="Create's a new user")
      * @ApiMethod(type="post")
+     * @ApiMenu(section="User", function="create")
      * @ApiRoute(name="/user/create")
      * @ApiParams(name="username", type="string", nullable=false, description="Username")
      * @ApiParams(name="email", type="string", nullable=false, description="Email")
@@ -117,6 +119,7 @@ Here is the list of methods available so far :
 * @ApiRoute(name="...")
 * @ApiParams(name="...", type="...", nullable=..., description="...", [sample=".."])
 * @ApiHeaders(name="...", type="...", nullable=..., description="...")
+* @ApiMenu(section="Login", function="login")
 * @ApiReturnHeaders(sample="...")
 * @ApiReturn(type="...", sample="...")
 
